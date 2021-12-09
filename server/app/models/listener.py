@@ -13,7 +13,7 @@ from app.app import createFlaskApp
 
 """控制端表"""
 
-c2_server = "http://0.0.0.0:8080"
+c2_server = "http://127.0.0.1:8080"
 lock = mp.Lock()
 implant_lock = mp.Lock()
 TASKS = []
