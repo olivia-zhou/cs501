@@ -57,10 +57,10 @@ func GetAllAgentsHandler(c *ishell.Context) {
 //SelectAgentHandler 选择被控端
 func SelectAgentHandler(c *ishell.Context) {
 	if len(vars.UpAgentIDList) == 0 {
-		c.Println("请先执行 agents 获取所有被控端的信息")
+		c.Println("please get agents list first")
 		return
 	}
-	choice := c.MultiChoice(vars.UpAgentIDList, "请选择要控制的被控端:")
+	choice := c.MultiChoice(vars.UpAgentIDList, "select a agent:")
 	vars.TargetAgentID, _ = strconv.Atoi(vars.UpAgentIDList[choice])
-	c.Println("您选择的被控端是:", vars.TargetAgentID)
+	c.Println("your choice is:", vars.TargetAgentID)
 }

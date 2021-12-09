@@ -53,6 +53,11 @@ func main() {
 		logrus.Error("rabbitmq.NotifyMessage failed,err:", err)
 		return
 	}
+	//7.监听结果
+	if err := rabbitmq.NotifyResult(); err != nil {
+		logrus.Error("rabbitmq.ResultMessage failed,err:", err)
+		return
+	}
 	shell := ishell.New()
 	shell.Println("\rhappy hacking")
 	routers.Init(shell)

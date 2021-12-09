@@ -11,19 +11,19 @@ func Init(shell *ishell.Shell) {
 	//获取所有被控端
 	shell.AddCmd(&ishell.Cmd{
 		Name: "agents",
-		Help: "获取所有被控端",
+		Help: "get agents list ",
 		Func: controllers.GetAllAgentsHandler,
 	})
 	//选择被控端
 	shell.AddCmd(&ishell.Cmd{
 		Name: "select_agent",
-		Help: "选择被控端",
+		Help: "select a agent",
 		Func: controllers.SelectAgentHandler,
 	})
 	//向被控端发布命令
 	shell.AddCmd(&ishell.Cmd{
 		Name: "send",
-		Help: "发送命令",
+		Help: "send command to agent",
 		Func: controllers.SendCmdHandler,
 	})
 
