@@ -2,7 +2,7 @@
 
 import requests 
 
-c2_server = "http://127.0.0.1:8080"
+c2_server = "http://0.0.0.0:8080"
 path = "/secret"
 
 def queue_cmd(cmd, agent_id):

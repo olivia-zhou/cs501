@@ -11,7 +11,7 @@ from flask import Flask, request
 class agents():
     """被控端表"""
     __tablename__ = 'agents'
-    server = "http://127.0.0.1:8080"
+    server = "http://0.0.0.0:8080"
     task_path = "/tasks"
     response_path = "/response"
     register_path = "/register"
@@ -23,7 +23,7 @@ class agents():
        self.username = username
        self.guid = guid
        self.integrity = None
-       self.ip = "127.0.0.1"
+       self.ip = "0.0.0.0"
        self.encryption_key = encryptionkey
        self.sleep_time = timesleep
        self.first_seen = None
