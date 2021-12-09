@@ -9,12 +9,12 @@ import logging
 import os
 from subprocess import Popen
 
+import app.models.wsgi as wsgi
+
 def main():
     log = logging.getLogger('werkzeug')
     log.disabled = True
-    import app.models.wsgi as wsgi
     wsgi.main()
-    #flasklistener.startlistener()
 
 if __name__ == "__main__":
     main()
