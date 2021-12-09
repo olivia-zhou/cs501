@@ -1,18 +1,10 @@
-#include "config.h"
-
+#include <windows.h>
 #include <string.h>
 #include <sysinfoapi.h>
-#include <windows.h>
 #include <winbase.h>
 
-#define DEBUG 1
-
-#if DEBUG == 1
-#include <stdio.h>
-#define LOG wprintf
-#else
-#define LOG void
-#endif
+#include "config.h" 
+#include "winhttp.h"
 
 int wmain(int argc, wchar_t **argv, wchar_t **envp)
 {
@@ -36,9 +28,12 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
     }
     char systemGuidValue[255];
     DWORD systemGuidBufferSize = sizeof(systemGuidValue);
-    if (RegGetValueA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", "MachineGuid", RRF_RT_REG_SZ, NULL, systemGuidValue, &systemGuidBufferSize) == 0)
+    if (RegGetValueA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", "MachineGuid", RRF_RT_REG_SZ, NULL, systemGuidValue, &systemGuidBufferSize) != 0)
     {
-        LOG(L"GUID: %s\n", systemGuidValue);
+        // Can't register at this point don't know what to do yet.
+        // LOG(L"GUID: %s\n", systemGuidValue);
+        return -1;
     }
+    
     return 0;
 }
