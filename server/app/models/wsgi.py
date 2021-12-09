@@ -2,11 +2,12 @@
 import multiprocessing
 import gunicorn.app.base
 from flask import Flask, render_template, make_response, request, Response
-from listner import FlaskListener
-#from testing import testclass
+#from app.models.listener import FlaskListener
+#from trialserver import trialserver
+from testing import testclass
 
-test = FlaskListener()
-app = test.getapp() 
+flaskapp = testclass(5)
+app = flaskapp.getapp() 
 
 def number_of_workers():
     return (multiprocessing.cpu_count() * 2) + 1
@@ -28,10 +29,12 @@ class GunicornWSGI(gunicorn.app.base.BaseApplication):
     def load(self):
         return self.application
 
-
-if __name__ == '__main__':
+def main():
     options = {
         'bind': '%s:%s' % ('127.0.0.1', '8080'),
         'workers': number_of_workers(),
     }
     GunicornWSGI(app, options).run()
+
+if __name__ == '__main__':
+    main()

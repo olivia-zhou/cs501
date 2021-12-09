@@ -4,10 +4,11 @@ import sqlite3
 from flask import Flask, request, jsonify
 import threading
 import os, sys, random, string
-import agents
+from app.models.agent import agents
 import multiprocessing as mp
 from multiprocessing import Process
 import requests 
+from app.app import createFlaskApp
 
 
 
@@ -21,7 +22,8 @@ class FlaskListener():
     AGENTS = []
     path = "data/listeners/{__name__}/"
 
-    app = Flask(__name__)
+    createflask = createFlaskApp()
+    app = createflask.create_app()
     encryptionkey = None
     
     def __init__(self):
@@ -67,34 +69,36 @@ class FlaskListener():
         self.guid, self.hostname, self.username = request.get_json()
         agent = agents(self.guid, self.hostname, self.username, self.encryptionkey)
         #addtodatabase(agent)
-        return
+        return self.encryptionkey
 
     def encryptionkey(self):
-        if self.encryptionkey == None:
-            self.encryptionkey = getencryptionkey()
+        #if self.encryptionkey == None:
+        #    self.encryptionkey = getencryptionkey()
+        self.encryptionkey = "blahblahblah"
         return self.encryptionkey
             
     
+    ###from 0xRick
+    
     def run(self):
+        self.app.logger.disabled = True
         self.app.run(port=self.port, host=self.ipaddress)
         return
         
-    def startprocess(self):
-        ###from 0xRick
-        self.server = Process(self.run)
+    def startlistener(self):
+        self.server = Process(target = self.run)
     
         cli = sys.modules['flask.cli']
         cli.show_server_banner = lambda *x: None
     
-        self.thread = threading.Thread(name = self.name,
-                                           target = self.server.start,
+        self.thread = threading.Thread(target = self.server.start,
                                            args = ())
         self.thread.thread = True
         self.thread.start()
     
         self.isRunning = True
     
-    def stopprocess(self):
+    def stoplistener(self):
         self.server.terminate()
         self.server = None
         self.thread = None
