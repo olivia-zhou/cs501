@@ -1,4 +1,4 @@
-from flask import Blueprint 
+# from flask import Blueprint 
 from app.libs.redprint import Redprint
 api = Redprint('agent')
 # 被控端
@@ -16,3 +16,13 @@ def get_cmd_handler(agent_id):
 def send_result_handler():
     """被控端向服务器上报执行结果"""
     return 'send_result_handler'
+
+@api.route('/hello', methods=['GET'])
+def hello():
+    """被控端从服务器获取命令"""
+    return "hello"
+
+@api.route('/')
+def hello2():
+    """被控端从服务器获取命令"""
+    return "hello"

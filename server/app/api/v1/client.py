@@ -1,4 +1,4 @@
-from flask import Blueprint, request,make_response
+from flask import request, make_response
 from app.libs.redprint import Redprint
 from app.validators.forms import AddCmdForm
 from app.models.command import Command
@@ -25,3 +25,8 @@ def add_cmd_handler():
 def get_agents_handler():
     """获取所有被控端agent的信息"""
     return 'get_agents_handler'
+
+@api.route('/hello', methods=['GET'])
+def hello():
+    """获取所有被控端agent的信息"""
+    return "hello"
