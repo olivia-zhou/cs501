@@ -18,8 +18,6 @@ class SQLAlchemy(_SQLAlchemy):
 
 class Query(BaseQuery):
     def filter_by(self, **kwargs):
-        if 'status' not in kwargs.keys():
-            kwargs['status'] = 1
         return super(Query, self).filter_by(**kwargs)
 
 
@@ -28,11 +26,11 @@ db = SQLAlchemy(query_class=Query)
 
 class Base(db.Model):
     __abstract__ = True
-    create_time = Column(Integer)
-    status = Column(SmallInteger, default=1)
+ 
+    
 
     def __init__(self):
-        self.create_time = int(datetime.now().timestamp())
+        pass
 
     @property
     def create_datetime(self):
