@@ -20,8 +20,6 @@ def add_cmd_handler():
     """控制端发送命令"""
     #1.校验参数
     form = AddCmdForm().validate_for_api()
-    print("agent_id:",form.data['agent_id'])
-    print("cmd:",form.data['cmd'])
     #2.向mysql中添加命令
     id = Command.add(
         cmd = form.data['cmd'],
@@ -41,7 +39,6 @@ def add_cmd_handler():
 def get_agents_handler():
     """获取所有被控端agent的信息"""
     agents = Agent().get_all()
-    print(type(agents))
     return resp_success(msg="get all agents success", data=agents)
 
 
@@ -54,8 +51,10 @@ def login_handler():
     client_id =  Client.verify(form.data['username'],form.data['password'])
     #3.生成token
     token = generate_auth_token(client_id)
+    #4.通知所有客户端
+    notify_all_client("client(id:%d,username:%s) login"%(client_id,form.data['username']))
     #4.返回响应
-    return resp_success(msg="登录成功",data=token.decode("utf-8"))
+    return resp_success(msg="login success",data=token.decode("utf-8"))
 
 def generate_auth_token(client_id):
     """生成token"""

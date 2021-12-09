@@ -5,7 +5,7 @@ from app.models.agent import Agent
 from app.models.command import Command
 from app.models.client import Client 
 from app.libs.response import resp_success
-from app.libs.pika import fpika,get_cmd_from_queue
+from app.libs.pika import fpika,get_cmd_from_queue,put_result_to_queue
 from datetime import datetime
 import json
 
@@ -55,17 +55,20 @@ def ping_handler(agent_id):
     return resp_success(msg="ping success")
 
 
-@api.route('/cmd/<agent_id>', methods=['GET'])
-def get_cmd_handler(agent_id):
-    """被控端从服务器获取命令"""
-    get_cmd_from_queue(agent_id)
-    return 'get_cmd_handler'
+# @api.route('/cmd/<agent_id>', methods=['GET'])
+# def get_cmd_handler(agent_id):
+#     """被控端从服务器获取命令"""
+#     cmd = get_cmd_from_queue(agent_id)
+#     return resp_success(msg="get cmd success",data=cmd)
 
 
 
 @api.route('/result', methods=['POST'])
 def send_result_handler():
     """被控端向服务器上报执行结果"""
-    data = ResultForm().validate_for_api()
-    Command().update(cmd_id=data['cmd_id'], result=data['result'])
-    return resp_success(msg="send result success")
+    form = ResultForm().validate_for_api()
+    #1.向mysql中插入新记录
+    cmd=Command().update(cmd_id=form.data['cmd_id'], result=form.data['result'])
+    #2.向rabbitmq对应的客户端queue中发送消息
+    put_result_to_queue(cmd)
+    return resp_success(msg="send result success",data=cmd)

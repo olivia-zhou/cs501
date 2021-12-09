@@ -32,8 +32,7 @@ class ResultForm(BaseForm):
 
     #校验cmd_id是否存在
     def validate_cmd_id(self, field):
-        cmd = Command.query.filter_by(id=field.data).first()
-        if not cmd:
+        if not Command.is_exist(field.data):
             raise NotFound('cmd_id is not found')
 
 

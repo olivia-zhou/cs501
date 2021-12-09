@@ -36,9 +36,15 @@ class Command(Base):
     @staticmethod
     def update(cmd_id,result): 
         with db.auto_commit():
-            command = Command.query.filter_by(id=cmd_id)
+            command = Command.query.filter_by(id=cmd_id).first()
             command.result = result
             command.updated_at = datetime.now()
             db.session.add(command)
-            return command.id
+            return {
+                'id':command.id,
+                'cmd':command.cmd,
+                'agent_id':command.agent_id,
+                'client_id':command.client_id,
+                'result':command.result,
+            }
 
