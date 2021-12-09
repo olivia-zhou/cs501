@@ -62,10 +62,10 @@ class FlaskListener():
         print("Queued up ", r)
         return "True"
 
-    @app.route("/register", methods=['POST'])
+    @app.route("/register", methods=['POST', 'GET'])
     def addAgent(self, client_id):
-        #get agent object from pipe
-        agent = agents(self.encryptionkey)
+        self.guid, self.hostname, self.username = request.get_json()
+        agent = agents(self.guid, self.hostname, self.username, self.encryptionkey)
         #addtodatabase(agent)
         return
 

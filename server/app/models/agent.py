@@ -17,11 +17,11 @@ class agents():
     register_path = "/register"
 
     
-    def __init__(self, encryptionkey, timesleep=3):
+    def __init__(self, hostname, username, guid, encryptionkey, timesleep=3):
        self.agent_id = os.urandom(10).hex()
-       self.hostname = None
-       self.username = None
-       self.guid = "".join(random.choice(string.ascii_letters + string.digits) for i in range(8))
+       self.hostname = hostname
+       self.username = username
+       self.guid = guid
        self.integrity = None
        self.ip = "127.0.0.1"
        self.encryption_key = encryptionkey
