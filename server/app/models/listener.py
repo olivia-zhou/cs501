@@ -58,11 +58,14 @@ def add_request():
     return "True"
 
 @app.route("/register", methods=['POST', 'GET'])
-def addAgent(client_id):
-    guid, hostname, username = request.get_json()
-    agent = agents(guid, hostname, username, encryptionkey)
+def addAgent():
+    fromimplant = request.get_json()
+    print(fromimplant)
+    #guid, hostname, username = fromimplant[0]
+    encryption_key = encryptionkey()
+    #agent = agents(guid, hostname, username, encryptionkey)
     #addtodatabase(agent)
-    return encryptionkey
+    return encryption_key
 
 def encryptionkey():
     #if encryptionkey == None:
