@@ -2,12 +2,9 @@
 import multiprocessing
 import gunicorn.app.base
 from flask import Flask, render_template, make_response, request, Response
-#from app.models.listener import FlaskListener
-#from trialserver import trialserver
-from testing import testclass
+from app.models.listener import app
+#from listener import app
 
-flaskapp = testclass(5)
-app = flaskapp.getapp() 
 
 def number_of_workers():
     return (multiprocessing.cpu_count() * 2) + 1
