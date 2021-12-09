@@ -3,6 +3,7 @@ Flask-SQLAlchemy==2.5.1
 gunicorn==20.1.0
 SQLAlchemy==1.4.27
 WTForms==3.0.0
+Werkzeug==2.0.2
 threading
 random
 string
@@ -18,4 +19,3 @@ greenlet==1.1.2
 itsdangerous==2.0.1
 Jinja2==3.0.3
 MarkupSafe==2.0.1
-Werkzeug==2.0.2

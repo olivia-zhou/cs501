@@ -11,7 +11,7 @@ from flask import Flask, request
 class agents():
     """被控端表"""
     __tablename__ = 'agents'
-    server = "http://127.0.0.1:8080"
+    server = "http://0.0.0.0:8080"
     task_path = "/tasks"
     response_path = "/response"
     register_path = "/register"

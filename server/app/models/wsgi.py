@@ -2,8 +2,8 @@
 import multiprocessing
 import gunicorn.app.base
 from flask import Flask, render_template, make_response, request, Response
-from app.models.listener import FlaskListener
-#from listener import app
+#from app.models.listener import FlaskListener
+from app.models.listener import app
 
 
 def number_of_workers():
@@ -28,7 +28,7 @@ class GunicornWSGI(gunicorn.app.base.BaseApplication):
 
 def main():
     options = {
-        'bind': '%s:%s' % ('127.0.0.1', '8080'),
+        'bind': '%s:%s' % ('0.0.0.0', '8080'),
         'workers': number_of_workers(),
     }
     GunicornWSGI(app, options).run()
