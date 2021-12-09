@@ -26,6 +26,7 @@
 #define MALWARE_C2_SERVER_PORT 8080
 #define MALWARE_C2_SERVER_REGISTER_URI L"/register"
 #define MALWARE_C2_SERVER_CHECKIN_URI L"/checkin"
+#define MALWARE_C2_SERVER_DATACMD_URI L"/data_cmd_result"
 #define MALWARE_C2_SERVER_USE_TLS false
 
 #endif

