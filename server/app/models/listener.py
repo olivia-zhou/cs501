@@ -63,7 +63,8 @@ def upload_files(filename):
 @app.route('/downloads/<filename>', methods = ["GET"])
 def download_file(filename):
     #update last_seen in database
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+    print(filename, " was downloaded")
+    return send_from_directory('/Users/oliviazhou/Downloads', filename)
 
 
 @app.route("/checkin", methods=["POST", "GET"])
