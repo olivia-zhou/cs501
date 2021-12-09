@@ -1,26 +1,18 @@
 #from Guinicorn documentation (https://docs.gunicorn.org/en/latest/custom.html)
 import multiprocessing
 import gunicorn.app.base
+from flask import Flask, render_template, make_response, request, Response
+from listner import FlaskListener
+#from testing import testclass
 
+test = FlaskListener()
+app = test.getapp() 
 
 def number_of_workers():
     return (multiprocessing.cpu_count() * 2) + 1
 
 
-def handler_app(environ, start_response):
-    response_body = b'Works fine'
-    status = '200 OK'
-
-    response_headers = [
-        ('Content-Type', 'text/plain'),
-    ]
-
-    start_response(status, response_headers)
-
-    return [response_body]
-
-
-class StandaloneApplication(gunicorn.app.base.BaseApplication):
+class GunicornWSGI(gunicorn.app.base.BaseApplication):
 
     def __init__(self, app, options=None):
         self.options = options or {}
@@ -42,4 +34,4 @@ if __name__ == '__main__':
         'bind': '%s:%s' % ('127.0.0.1', '8080'),
         'workers': number_of_workers(),
     }
-    StandaloneApplication(handler_app, options).run()
+    GunicornWSGI(app, options).run()

