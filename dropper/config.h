@@ -1,0 +1,14 @@
+#ifndef CONFIG_H_
+#define CONFIG_H_
+
+#define MALWARE_FILE_EXISTS_STRING "C:\\malware\\ch0nky.txt"
+#define MALWARE_KILL_DATE_DAY 1 
+#define MALWARE_KILL_DATE_MONTH 1 
+#define MALWARE_KILL_DATE_YEAR 2022 
+#define MALWARE_NAMED_PIPE "ch0nky"
+
+#define MALWARE_USER_AGENT "ch0nky"
+#define MALWARE_C2_SERVER_ADDRESS "http://127.0.0.1"
+#define MALWARE_C2_SERVER_PORT 5000
+
+#endif
