@@ -78,13 +78,15 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
             requestBody += iter;
             requestBody += "\\\\";
             iter = strtok(NULL, "\\=");
-            LOG(L"iter: %s\n", iter);
         }
-        requestBody += "\b\b\",";
+        requestBody.pop_back();
+        requestBody.pop_back();
+        requestBody += "\",";
         memset(env_resultBuffer, 0, 4096);
     }
     free(env_resultBuffer);
-    requestBody += "\b}}";
+    requestBody.pop_back();
+    requestBody += "}}";
     std::cout << requestBody << std::endl;
     std::wstring result;
     do
