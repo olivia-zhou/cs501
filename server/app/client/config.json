@@ -1,0 +1,14 @@
+{
+    "base_url":"http://127.0.0.1:5000/api/v1/client",
+    "api":{
+        "login":"/login",
+        "send_cmd":"/cmd",
+        "get_all_agents":"/agents"
+    },
+    "rabbitmq":{
+        "username":"admin",
+        "password":"admin",
+        "host":"localhost",
+        "port":"5672"
+    }
+}
