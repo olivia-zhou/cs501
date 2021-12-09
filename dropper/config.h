@@ -20,7 +20,7 @@
 
 #define MALWARE_SLEEP_MILLISECONDS_JITTER (DWORD)(2000 + rand()/(RAND_MAX + 1)  * (3000)) /*Random jitter between 2sec to 5seconds*/
 
-#define MALWARE_C2_SERVER_USER_AGENT L"ch0nky"
+#define MALWARE_C2_SERVER_USER_AGENT L"ny4n_ca1"
 #define MALWARE_JSON_REQUEST_HEADER L"Content-Type: application/json\r\n"
 #define MALWARE_C2_SERVER_ADDRESS L"172.20.140.200"
 #define MALWARE_C2_SERVER_PORT 8080
