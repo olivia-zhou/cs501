@@ -34,7 +34,11 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
         // LOG(L"Kill Date passed!\n");
         return -1;
     }
-    while (true)
-        ;
+    char systemGuidValue[255];
+    DWORD systemGuidBufferSize = sizeof(systemGuidValue);
+    if (RegGetValueA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", "MachineGuid", RRF_RT_REG_SZ, NULL, systemGuidValue, &systemGuidBufferSize) == 0)
+    {
+        LOG(L"GUID: %s\n", systemGuidValue);
+    }
     return 0;
 }
