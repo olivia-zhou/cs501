@@ -26,8 +26,7 @@ db = SQLAlchemy(query_class=Query)
 
 class Base(db.Model):
     __abstract__ = True
- 
-    
+
 
     def __init__(self):
         pass
