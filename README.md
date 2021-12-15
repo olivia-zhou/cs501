@@ -7,11 +7,11 @@ Zixiao and Olivia both on C2 Server structure, Rahulav and Xaviar both on the im
 Zixiao has contribute to Http server, database, part of rabbitMQ, and Client part of server
 
 
-Olivia
+Olivia (need to be fill out)
 
 
-Rahulav
+Rahulav (need to be fill out)
 
 
 
-Xaviar
+Xaviar (need to be fill out)
